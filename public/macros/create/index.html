@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar macro | Gerenciador de Macros</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/quill/quill.snow.css">
+  <link rel="stylesheet" href="/vendor/choices/styles/choices.min.css">
+  <link rel="stylesheet" href="/css/globals.css">
+</head>
+<body>
+  <header class="app-header">
+    <h2>Gerenciador de macros</h2>
+    <nav>
+      <a class="btn" href="/macros/search">Buscar macros</a>
+    </nav>
+  </header>
+
+  <div id="loading-overlay">
+    <div class="main-spinner"></div>
+    <p>Carregando...</p>
+  </div>
+
+  <main class="page">
+    <div class="card accent" id="create-card">
+      <div class="card-header">
+        <h2>Criar macro</h2>
+        <select id="select-status" class="compact" aria-label="Status da macro">
+          <option value="active">Ativa</option>
+          <option value="inactive">Inativa</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="input-title">Título da macro</label>
+        <input type="text" id="input-title" placeholder="Digite o nome da macro (sem os placeholders)" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label for="input-macro-description">Descrição da macro</label>
+        <textarea id="input-macro-description" rows="4" placeholder="Descreva a macro, informando objetivo, público-alvo, ferramenta ou funcionalidade em questão..."></textarea>
+        <p class="hint">Uso interno: fica registrada na base de macros (mínimo de 6 caracteres).</p>
+      </div>
+
+      <div class="form-group grid grid-2">
+        <div>
+          <span class="field-label">Equipe</span>
+          <select id="select-team" multiple></select>
+        </div>
+        <div class="grid">
+          <div>
+            <label class="field-label" for="select-function">Função</label>
+            <select id="select-function"></select>
+          </div>
+          <div>
+            <label class="field-label" for="select-language">Idioma</label>
+            <select id="select-language"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group grid grid-4">
+        <div><label class="field-label" for="select-spec1">Spec 1</label><select id="select-spec1"><option value="">-</option></select></div>
+        <div><label class="field-label" for="select-spec2">Spec 2</label><select id="select-spec2" disabled><option value="">-</option></select></div>
+        <div><label class="field-label" for="select-spec3">Spec 3</label><select id="select-spec3" disabled><option value="">-</option></select></div>
+        <div><label class="field-label" for="select-spec4">Spec 4</label><select id="select-spec4" disabled><option value="">-</option></select></div>
+      </div>
+
+      <div class="form-group">
+        <div class="summary">
+          <div class="summary-line"><strong>Título final:</strong><span id="preview-title"></span></div>
+          <div class="summary-line"><strong>Descrição final:</strong><span id="preview-description"></span></div>
+          <div class="summary-line"><strong>Tag:</strong><span id="preview-tag">-</span></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <span class="field-label">Comentário</span>
+        <div id="quill-editor"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="select-comment-visibility">Visibilidade do comentário</label>
+        <select id="select-comment-visibility" class="compact">
+          <option value="public">Público</option>
+          <option value="private">Interno</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <button id="btn-create" class="btn btn-accent btn-block" disabled>
+          <span>Criar macro</span>
+          <span class="spinner"></span>
+        </button>
+        <p class="hint" id="create-hint"></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/vendor/quill/quill.js"></script>
+  <script src="/vendor/choices/scripts/choices.min.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/js/macro-editor.js"></script>
+  <script src="/macros/create/script.js"></script>
+</body>
+</html>

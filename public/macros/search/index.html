@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar macros | Gerenciador de Macros</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/globals.css">
+</head>
+<body>
+  <header class="app-header">
+    <h2>Gerenciador de macros</h2>
+    <nav>
+      <a class="btn" href="/macros/create">Criar nova macro</a>
+    </nav>
+  </header>
+
+  <main class="page" style="max-width: 1200px;">
+    <div class="search-layout">
+      <aside class="card filters">
+        <h2>Filtros</h2>
+
+        <label for="filter-id">ID</label>
+        <input type="text" id="filter-id" inputmode="numeric" autocomplete="off">
+
+        <label for="filter-title">Título</label>
+        <input type="text" id="filter-title" autocomplete="off">
+
+        <label for="filter-tag">Tag</label>
+        <div class="autocomplete">
+          <input type="text" id="filter-tag" autocomplete="off" placeholder="Digite para buscar...">
+          <ul id="tag-suggestions" class="suggestions" hidden></ul>
+        </div>
+
+        <label for="filter-status">Status</label>
+        <select id="filter-status">
+          <option value="Ativa,Inativa">Todos</option>
+          <option value="Ativa">Ativa</option>
+          <option value="Inativa">Inativa</option>
+        </select>
+
+        <label for="filter-keyword">Palavra-chave</label>
+        <input type="text" id="filter-keyword" autocomplete="off">
+
+        <button id="btn-search" class="btn btn-block">
+          <span>Pesquisar</span>
+          <span class="spinner"></span>
+        </button>
+      </aside>
+
+      <section class="card results" id="results">
+        <h2 id="results-counter">0 resultados</h2>
+        <div id="results-items"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/common.js"></script>
+  <script src="/macros/search/script.js"></script>
+</body>
+</html>
