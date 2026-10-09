@@ -72,7 +72,7 @@ Injetadas pelo Secrets Manager (ver `values.yml`):
 - `ZENDESK_CLIENT_ID` e `ZENDESK_CLIENT_SECRET` — client OAuth confidencial do Zendesk (modo preferencial, ver abaixo)
 - `ZENDESK_BASIC_TOKEN` — fallback legado: base64 de `email/token:api_token`. Usado so se o OAuth nao estiver configurado
 
-Configuracao (nao secret): `ZENDESK_BASE_URL`, `ZENDESK_OAUTH_SCOPE` (padrao `read write`; pode ser restringido, ex. `macros:read macros:write`), `ZENDESK_OAUTH_EXPIRES_IN` (segundos, opcional; vazio = padrao do Zendesk), `MAINTENANCE_MODE` (`true` exibe a pagina de manutencao).
+Configuracao (nao secret): `ZENDESK_BASE_URL`, `ZENDESK_OAUTH_SCOPE` (padrao `read write tickets:read macros:read macros:write`, validado contra o Zendesk real; o client OAuth no Admin Center precisa ter todos esses escopos permitidos, e o escopo pedido deve estar dentro dessa lista, senao o token falha com 400 "requested scope is invalid"), `ZENDESK_OAUTH_EXPIRES_IN` (segundos, opcional; vazio = padrao do Zendesk), `MAINTENANCE_MODE` (`true` exibe a pagina de manutencao).
 Somente dev local: `DEV_USER_EMAIL` simula o e-mail do usuario logado (NUNCA definir em producao).
 
 ## Autenticacao no Zendesk
@@ -105,8 +105,10 @@ Implementada em `src/utils/zendeskClient.js` (config em `src/config/macros.js`):
 cp .env.example .env
 # Preencha GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, MACROS_SPREADSHEET_ID, ZENDESK_BASIC_TOKEN e DEV_USER_EMAIL
 npm install
-npm start
+npm run dev   # igual a "npm start", mas com --use-system-ca (usa os certificados raiz do sistema operacional)
 ```
+
+Em rede corporativa com inspecao TLS, o `fetch` do Node falha com `UNABLE_TO_GET_ISSUER_CERT_LOCALLY` / `SELF_SIGNED_CERT_IN_CHAIN`. Use `npm run dev` ou aponte `NODE_EXTRA_CA_CERTS` para o certificado raiz da empresa. Essas opcoes sao lidas na inicializacao do Node, entao NAO funcionam via `.env`. NUNCA usar `NODE_TLS_REJECT_UNAUTHORIZED=0`.
 
 ## Deploy
 

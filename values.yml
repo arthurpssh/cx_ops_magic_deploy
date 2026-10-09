@@ -42,7 +42,7 @@ env:
       name: gerenciador-de-macros-zendesk-basic-token
       key: ZENDESK_BASIC_TOKEN
   ZENDESK_BASE_URL: "https://suportehotmart.zendesk.com/api/v2"
-  ZENDESK_OAUTH_SCOPE: "read write"
+  ZENDESK_OAUTH_SCOPE: "read write tickets:read macros:read macros:write"
   MAINTENANCE_MODE: "false"
 
 lb:

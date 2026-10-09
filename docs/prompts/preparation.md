@@ -29,7 +29,7 @@ Quatro secrets sao obrigatorios (injetados via AWS Secrets Manager):
 As seguintes variaveis sao configuracao (nao secret), definir diretamente no `env:` do values.yml:
 
 - `ZENDESK_BASE_URL` — URL base da API do Zendesk
-- `ZENDESK_OAUTH_SCOPE` — escopos OAuth solicitados (padrao `read write`)
+- `ZENDESK_OAUTH_SCOPE` — escopos OAuth solicitados (padrao `read write tickets:read macros:read macros:write`)
 - `MAINTENANCE_MODE` — `true` exibe a pagina de manutencao
 
 No values.yml cada secret deve ser um `secretKeyRef` com nome no formato `{app-name}-{env-name-lowercase}`.
@@ -79,7 +79,7 @@ env:
       name: {nome-da-aplicacao}-zendesk-basic-token
       key: ZENDESK_BASIC_TOKEN
   ZENDESK_BASE_URL: "https://suportehotmart.zendesk.com/api/v2"
-  ZENDESK_OAUTH_SCOPE: "read write"
+  ZENDESK_OAUTH_SCOPE: "read write tickets:read macros:read macros:write"
   MAINTENANCE_MODE: "false"
 
 lb:

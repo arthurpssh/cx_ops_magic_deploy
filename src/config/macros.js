@@ -36,7 +36,7 @@ function zendeskConfig() {
       ? {
           clientId,
           clientSecret,
-          scope: (process.env.ZENDESK_OAUTH_SCOPE || 'read write').trim(),
+          scope: (process.env.ZENDESK_OAUTH_SCOPE || 'read write tickets:read macros:read macros:write').trim(),
           expiresIn: Number.isFinite(expiresIn) ? expiresIn : null, // segundos; vazio = padrão do Zendesk
         }
       : null,

@@ -18,6 +18,22 @@ let tokenRequest = null; // Promise em andamento (várias requisições comparti
 
 console.log(`[zendesk] autenticação: ${zendesk.oauth ? 'OAuth client credentials (Bearer)' : 'Basic token (legado)'}`);
 
+const TLS_CODES = ['UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'SELF_SIGNED_CERT_IN_CHAIN', 'DEPTH_ZERO_SELF_SIGNED_CERT', 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'];
+const NETWORK_CODES = ['ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'ECONNREFUSED', 'ECONNRESET', 'UND_ERR_CONNECT_TIMEOUT'];
+
+// O fetch do Node só diz "fetch failed"; o motivo real (DNS, TLS, proxy...) vem em error.cause
+function describeNetworkError(error) {
+  const cause = error && error.cause;
+  const code = cause && (cause.code || cause.name);
+  const detail = [code, cause && cause.message].filter(Boolean).join(' - ');
+
+  let hint = '';
+  if (TLS_CODES.includes(code)) hint = ' Provável inspeção TLS/proxy corporativo: aponte NODE_EXTRA_CA_CERTS para o certificado raiz da empresa.';
+  else if (NETWORK_CODES.includes(code)) hint = ' Verifique VPN/proxy/DNS e o valor de ZENDESK_BASE_URL.';
+
+  return `${error.message}${detail ? ` (${detail})` : ''}.${hint}`;
+}
+
 async function readJson(response) {
   const text = await response.text();
   try {
@@ -40,15 +56,15 @@ async function requestAccessToken() {
       body: JSON.stringify(body),
     });
   } catch (error) {
-    throw new HttpError(502, `Falha de rede ao obter o token OAuth do Zendesk: ${error.message}`);
+    throw new HttpError(502, `Falha de rede ao obter o token OAuth do Zendesk: ${describeNetworkError(error)}`);
   }
 
   const json = await readJson(response);
   if (!response.ok || !json || !json.access_token) {
     const reason = (json && (json.error_description || json.error || json.description)) || 'sem detalhes';
     const hint = [400, 401].includes(response.status) ? ' Verifique ZENDESK_CLIENT_ID/ZENDESK_CLIENT_SECRET e o escopo do client.' : '';
-    // Nunca inclui o client_secret na mensagem
-    throw new HttpError(502, `Falha ao obter o token OAuth do Zendesk (${response.status}): ${reason}.${hint}`);
+    // O escopo solicitado não é segredo e ajuda a diagnosticar; o client_secret nunca entra na mensagem
+    throw new HttpError(502, `Falha ao obter o token OAuth do Zendesk (${response.status}): ${reason}.${hint} Escopo solicitado: "${scope}".`);
   }
 
   const ttlSeconds = Number(json.expires_in) > 0 ? Number(json.expires_in) : DEFAULT_TOKEN_TTL_S;
@@ -102,7 +118,7 @@ async function request(path, { method = 'GET', body, retries = 2 } = {}) {
         body: body === undefined ? undefined : JSON.stringify(body),
       });
     } catch (error) {
-      if (attempt >= retries) throw new HttpError(502, `Falha de rede ao acessar o Zendesk: ${error.message}`);
+      if (attempt >= retries) throw new HttpError(502, `Falha de rede ao acessar o Zendesk: ${describeNetworkError(error)}`);
       await sleep(wait);
       wait *= 2;
       attempt++;

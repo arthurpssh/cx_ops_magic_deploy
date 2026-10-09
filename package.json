@@ -4,7 +4,8 @@
   "description": "Gerenciador de Macros do Zendesk (Node.js + Express, Google Sheets como storage)",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "dev": "node --use-system-ca src/server.js"
   },
   "keywords": [],
   "type": "commonjs",
