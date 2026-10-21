@@ -6,7 +6,7 @@ const { memo } = require('../utils/memo');
 const { HttpError } = require('../utils/errors');
 const { spreadsheetId, sheets } = require('../config/macros');
 const { addLog } = require('./logService');
-const { LANGUAGES, loadTeams, resolveSpec } = require('./formOptionsService');
+const { loadLanguages, loadTeams, resolveSpec } = require('./formOptionsService');
 const { GENERAL_TEAM, buildDescription, formatMacro, compareMacros } = require('../utils/macroFormatter');
 
 const SEARCH_COLUMNS = ['id', 'status', 'title', 'description', 'tag_cr'];
@@ -141,7 +141,7 @@ async function createMacro(user, input = {}) {
   const func = asString(input.func);
   if (!func) throw new HttpError(400, 'Selecione a função da macro.');
 
-  const language = LANGUAGES.find((l) => l.abbr === input.lang);
+  const language = (await loadLanguages()).find((l) => l.abbr === input.lang);
   if (!language) throw new HttpError(400, 'Idioma inválido.');
 
   const spec = await resolveSpec(input.specs);

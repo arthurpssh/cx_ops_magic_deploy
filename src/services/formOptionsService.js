@@ -6,15 +6,22 @@ const { spreadsheetId, sheets } = require('../config/macros');
 const CACHE_TTL_MS = 60 * 1000;
 const SPEC_LEVELS = 4;
 
-// Lista fixa de idiomas
-const LANGUAGES = [
-  { name: 'Português (Brasil)', abbr: 'PT-BR' },
-  { name: 'English', abbr: 'EN' },
-  { name: 'Español', abbr: 'ES' },
-  { name: 'Español e English', abbr: 'ES + EN' },
-];
-
 const text = (value) => String(value === null || value === undefined ? '' : value).trim();
+
+// Aba "Base de Idiomas": Idioma | Abreviatura (mantém a ordem da planilha)
+const loadLanguages = memo(async () => {
+  const rows = await SheetsDB.getRows(spreadsheetId, sheets.languages, {});
+  const byAbbr = new Map();
+
+  rows.forEach((row) => {
+    const name = text(row['Idioma']);
+    const abbr = text(row['Abreviatura']);
+    if (!name || !abbr || byAbbr.has(abbr)) return;
+    byAbbr.set(abbr, { name, abbr });
+  });
+
+  return [...byAbbr.values()];
+}, CACHE_TTL_MS);
 
 // Aba "Base de Group Restrictions": name | id | ids ("1, 2, 3")
 const loadTeams = memo(async () => {
@@ -64,8 +71,13 @@ const loadSpecs = memo(async () => {
 }, CACHE_TTL_MS);
 
 async function getFormOptions() {
-  const [teams, functions, specs] = await Promise.all([loadTeams(), loadFunctions(), loadSpecs()]);
-  return { teams, functions, languages: LANGUAGES, specs };
+  const [teams, functions, languages, specs] = await Promise.all([
+    loadTeams(),
+    loadFunctions(),
+    loadLanguages(),
+    loadSpecs(),
+  ]);
+  return { teams, functions, languages, specs };
 }
 
 /**
@@ -81,4 +93,4 @@ async function resolveSpec(levels) {
   return match ? { placeholder: match.placeholder, tag: match.tag } : null;
 }
 
-module.exports = { LANGUAGES, loadTeams, getFormOptions, resolveSpec };
+module.exports = { loadLanguages, loadTeams, getFormOptions, resolveSpec };

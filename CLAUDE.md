@@ -21,6 +21,7 @@ gerenciador-de-macros/
 │   ├── app.js                       # Express app (health, manutencao, auth, rotas)
 │   ├── server.js                    # Entry point (escuta na porta PORT)
 │   ├── config/
+│   │   ├── serviceCatalog.js        # Servicos listados como cards na home
 │   │   ├── macros.js                # Abas da planilha, Zendesk, flags (le as env vars)
 │   │   └── googleClient.js          # Autenticacao Google Sheets (Service Account)
 │   ├── middlewares/
@@ -46,6 +47,7 @@ gerenciador-de-macros/
 │   ├── css/globals.css
 │   ├── js/common.js                 # window.App: api(), toast, helpers
 │   ├── js/macro-editor.js           # Editor Quill reutilizavel
+│   ├── home/                        # Home com os cards de servicos
 │   └── macros/{create,search,edit}/ # index.html + script.js de cada pagina
 ├── .github/workflows/deploy.yaml
 ├── Dockerfile
@@ -74,6 +76,17 @@ Injetadas pelo Secrets Manager (ver `values.yml`):
 
 Configuracao (nao secret): `ZENDESK_BASE_URL`, `ZENDESK_OAUTH_SCOPE` (padrao `read write tickets:read macros:read macros:write`, validado contra o Zendesk real; o client OAuth no Admin Center precisa ter todos esses escopos permitidos, e o escopo pedido deve estar dentro dessa lista, senao o token falha com 400 "requested scope is invalid"), `ZENDESK_OAUTH_EXPIRES_IN` (segundos, opcional; vazio = padrao do Zendesk), `MAINTENANCE_MODE` (`true` exibe a pagina de manutencao).
 Somente dev local: `DEV_USER_EMAIL` simula o e-mail do usuario logado (NUNCA definir em producao).
+
+## Home e servicos
+
+A raiz `/` e uma home com cards (`public/home/`), um por servico. Os cards vem de `src/config/serviceCatalog.js` via `GET /api/services`. O Gerenciador de Macros e o primeiro servico: tem suas paginas em `public/macros/*`, rotas de pagina `/macros/*` e API `/api/macros/*`. As paginas de cada servico tem um botao "Inicio" no cabecalho que volta para `/`.
+
+Para incluir um novo servico:
+1. API sob `/api/<servico>` (router proprio registrado em `src/app.js`) e paginas sob `/<servico>/...` (`public/<servico>/...` + rotas em `src/routes/viewRoutes.js`).
+2. Uma entrada em `src/config/serviceCatalog.js` (`id`, `title`, `description`, `href`).
+3. Opcional: um icone em `ICONS` de `public/home/script.js` (sem icone, o card mostra a inicial do titulo).
+
+Atencao: o controle de acesso (`requireManager`) e global e usa a lista "Base de Gestores de Macros". Um servico para outro publico exigira autorizacao por servico (hoje nao existe).
 
 ## Autenticacao no Zendesk
 
@@ -140,7 +153,9 @@ Em rede corporativa com inspecao TLS, o `fetch` do Node falha com `UNABLE_TO_GET
 | GET | /api/macros/:id | Macro atual no Zendesk + descricao interna |
 | POST | /api/macros | Cria macro (Zendesk + base + log) |
 | PUT | /api/macros/:id | Atualiza macro (Zendesk + base + log) |
-| GET | / | Redireciona para /macros/create |
+| GET | /api/services | Catalogo de servicos exibidos na home |
+| GET | / | Home: cards dos servicos |
+| GET | /macros | Redireciona para /macros/create |
 | GET | /macros/create | Criar macro |
 | GET | /macros/search | Buscar macros |
 | GET | /macros/edit/:id | Editar macro |

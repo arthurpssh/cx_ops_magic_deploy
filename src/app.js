@@ -6,6 +6,7 @@ const { maintenance, requireManager } = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
 const macroRoutes = require('./routes/macroRoutes');
 const viewRoutes = require('./routes/viewRoutes');
+const serviceCatalog = require('./config/serviceCatalog');
 
 const app = express();
 app.disable('x-powered-by');
@@ -30,6 +31,7 @@ app.use('/vendor/choices', express.static(path.join(modules, 'choices.js/public/
 app.use(express.static(path.join(__dirname, '../public'), { index: false, redirect: false }));
 
 app.get('/api/me', (req, res) => res.json({ email: req.user.email }));
+app.get('/api/services', (req, res) => res.json(serviceCatalog));
 app.use('/api/macros', macroRoutes);
 app.use('/', viewRoutes);
 

@@ -9,7 +9,7 @@
 
   const TOOLS = [
     [{ header: [false, 1, 2, 3, 4] }],
-    [{ color: [] }, { background: [] }],
+    [{ background: [] }],
     [{ list: 'ordered' }, { list: 'bullet' }, { indent: '+1' }, { indent: '-1' }],
     ['link', 'blockquote', 'code', 'code-block', 'divider'],
   ];
@@ -19,7 +19,6 @@
 
   const TITLES = [
     ['.ql-header', 'Formatação de Título'],
-    ['.ql-color', 'Cor do Texto'],
     ['.ql-background', 'Cor do Fundo'],
     ['.ql-list[value="ordered"]', 'Lista Numerada'],
     ['.ql-list[value="bullet"]', 'Lista com Marcadores'],
@@ -53,6 +52,14 @@
           },
         },
       },
+    });
+
+    // Remove a cor do texto (colada ou já salva): cor fixa quebra o modo escuro do Zendesk.
+    quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+      delta.ops.forEach((op) => {
+        if (op.attributes && op.attributes.color) delete op.attributes.color;
+      });
+      return delta;
     });
 
     const toolbar = container.parentElement.querySelector('.ql-toolbar');

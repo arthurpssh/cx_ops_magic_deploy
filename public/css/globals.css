@@ -253,6 +253,48 @@ dialog.modal::backdrop { background: rgba(0, 0, 0, .6); }
 .status-tag.ativa { background: rgb(127, 207, 127); color: rgb(14, 105, 14); }
 .status-tag.inativa { background: rgb(207, 127, 127); color: rgb(105, 14, 14); }
 
+/* ---------- Home (cards de serviços) ---------- */
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.service-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 10px;
+  border-top: 4px solid var(--accent);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.service-card:hover, .service-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .14);
+  outline: none;
+}
+.service-icon {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+}
+.service-icon svg { width: 26px; height: 26px; }
+.service-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.service-description { color: var(--muted); font-size: 14px; }
+.service-arrow { flex: none; font-size: 20px; color: var(--accent); }
+
 /* ---------- Busca ---------- */
 .search-layout {
   display: grid;

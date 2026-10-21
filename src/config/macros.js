@@ -52,6 +52,7 @@ module.exports = {
     macros: 'Base de Macros',
     restrictionGroups: 'Base de Group Restrictions',
     functions: 'Base de Funções',
+    languages: 'Base de Idiomas',
     specs: 'Base de Specs',
     managers: 'Base de Gestores de Macros',
     handbookMacros: 'Artigos Handbook + Macro_ids',
