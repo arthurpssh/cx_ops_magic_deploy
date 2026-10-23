@@ -7,9 +7,24 @@
   DividerBlot.tagName = 'hr';
   Quill.register(DividerBlot);
 
+  // Paleta do editor do Zendesk, sem preto/branco (cores fixas assim quebram o modo claro/escuro).
+  const TEXT_COLORS = [
+    '#c72809', '#bc5a10', '#018747', '#096ecc', '#960fd4', '#d11db5',
+    '#7d1905', '#723609', '#01512a', '#054580', '#640a8e', '#8b1379',
+  ];
+
+  // "rgb(199, 40, 9)" ou "#C72809" -> "#c72809"
+  function toHex(value) {
+    const v = String(value || '').trim().toLowerCase();
+    const m = v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (m) return '#' + [m[1], m[2], m[3]].map((n) => Number(n).toString(16).padStart(2, '0')).join('');
+    return v;
+  }
+
   const TOOLS = [
     [{ header: [false, 1, 2, 3, 4] }],
-    [{ background: [] }],
+    ['bold', 'italic', 'underline'],
+    [{ color: TEXT_COLORS }, { background: [] }],
     [{ list: 'ordered' }, { list: 'bullet' }, { indent: '+1' }, { indent: '-1' }],
     ['link', 'blockquote', 'code', 'code-block', 'divider'],
   ];
@@ -19,6 +34,10 @@
 
   const TITLES = [
     ['.ql-header', 'Formatação de Título'],
+    ['.ql-bold', 'Negrito'],
+    ['.ql-italic', 'Itálico'],
+    ['.ql-underline', 'Sublinhado'],
+    ['.ql-color', 'Cor do Texto'],
     ['.ql-background', 'Cor do Fundo'],
     ['.ql-list[value="ordered"]', 'Lista Numerada'],
     ['.ql-list[value="bullet"]', 'Lista com Marcadores'],
@@ -54,10 +73,13 @@
       },
     });
 
-    // Remove a cor do texto (colada ou já salva): cor fixa quebra o modo escuro do Zendesk.
+    // Descarta cores de texto fora da paleta (coladas ou já salvas), como preto e branco:
+    // cor fixa quebra o modo claro/escuro do Zendesk.
     quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
       delta.ops.forEach((op) => {
-        if (op.attributes && op.attributes.color) delete op.attributes.color;
+        if (op.attributes && op.attributes.color && !TEXT_COLORS.includes(toHex(op.attributes.color))) {
+          delete op.attributes.color;
+        }
       });
       return delta;
     });

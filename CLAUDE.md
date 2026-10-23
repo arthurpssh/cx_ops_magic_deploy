@@ -107,6 +107,7 @@ Implementada em `src/utils/zendeskClient.js` (config em `src/config/macros.js`):
 | Base de Macros | id, status, tag_id, raw_title, title, description, d_team, d_func, d_lang, created_at, updated_at, content, tag_cr, restriction, handbook, macro_description |
 | Base de Group Restrictions | name, id, ids (ids separados por virgula) |
 | Base de Funções | Função, Descrição |
+| Base de Idiomas | Idioma, Abreviatura (opções de idioma dos formulários) |
 | Base de Specs | Nível 1..4, Concat Placeholder, Tag CR 3 e 4 (macro CR) |
 | Base de Gestores de Macros | email |
 | Artigos Handbook + Macro_ids | ID, Macros |
